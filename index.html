@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<head>
+    <title>iFrame Proxy</title>
+</head>
+
+<body style="overflow: hidden">
+	<div id=container>
+	
+	</div>
+</body>
+
+<footer>
+    <script> 
+	let getUrlVars = function() {
+	    var vars = {};
+	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	        vars[key] = value;
+	    });
+	    return vars;
+	}
+	let params = getUrlVars();
+	let container = document.getElementById('container');
+	container.style.width = window.innerHeight;
+	container.style.height = window.innerWidth;
+	container.innerHTML = 
+	`<iframe 
+		id=video
+		width="${window.innerWidth + 'px'}" 
+		height="${window.innerHeight + 'px'}" 
+		src="https://www.youtube-nocookie.com/embed/${params.id}?rel=0&controls=0&start=${params.start ? params.start : 0}"
+		frameborder="0"
+		allow="autoplay; encrypted-media"
+		sandbox="allow-scripts allow-same-origin">
+	</iframe>`
+	console.log("PARAMS", getUrlVars());
+
+	// Fill the iframe
+	let video = document.getElementById('container');
+	video.style.width = window.innerHeight + 'px';
+	video.style.height = window.innerWidth + 'px';
+	</script>
+</footer>
+
+</html>
