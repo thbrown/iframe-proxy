@@ -5,41 +5,55 @@
 </head>
 
 <body style="overflow: hidden; margin: 0px">
-	<div id=container>
-	
-	</div>
+<div id=container>
+</div>
 </body>
 
 <footer>
-    <script> 
-	let getUrlVars = function() {
-	    var vars = {};
-	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-	        vars[key] = value;
-	    });
-	    return vars;
-	}
-	let params = getUrlVars();
-	let container = document.getElementById('container');
-	container.style.width = window.innerHeight;
-	container.style.height = window.innerWidth;
-	container.innerHTML = 
-	`<iframe 
-		id=video
-		width="${window.innerWidth + 'px'}" 
-		height="${window.innerHeight + 'px'}" 
-		src="https://www.youtube-nocookie.com/embed/${params.id}?rel=0&controls=0&playsinline=1&iv_load_policy=3&start=${params.start ? params.start : 0}"
-		frameborder="0"
-		allow="autoplay; encrypted-media"
-		sandbox="allow-scripts allow-same-origin">
-	</iframe>`
-	console.log("PARAMS", getUrlVars());
+<script> 
+  const getUrlVars = () => {
+    const vars = {};
+    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+      vars[key] = value;
+    });
+    return vars;
+  };
+  const params = getUrlVars();
+  const container = document.getElementById('container');
+  container.style.width = window.innerHeight;
+  container.style.height = window.innerWidth;
 
-	// Fill the iframe
-	let video = document.getElementById('container');
-	video.style.width = window.innerHeight + 'px';
-	video.style.height = window.innerWidth + 'px';
-	</script>
+  const iframe = document.createElement('iframe');
+  iframe.id = 'video';
+  iframe.width = window.innerWidth;
+  iframe.height = window.innerHeight;
+  iframe.src = `https://www.youtube-nocookie.com/embed/${
+    params.id
+  }?rel=0&controls=0&playsinline=1&iv_load_policy=3&start=${
+    params.start ? params.start : 0
+  }`;
+  iframe.frameBorder = '0';
+  iframe.allow = 'autoplay; encrypted-media';
+  iframe.sandbox = 'allow-scripts allow-same-origin';
+  iframe.addEventListener('load', () => {
+    if (iframe.width !== '0' && iframe.height !== '0') {
+      if (window.parent) {
+        window.parent.postMessage('IFRAME_PROXY_LOAD_SUCCESS:' + params.id, '*');
+      }
+    } else {
+      if (window.parent) {
+        window.parent.postMessage('IFRAME_PROXY_LOAD_FAIL:' + params.id, '*');
+      }
+    }
+  });
+  container.appendChild(iframe);
+
+  // Fill the iframe
+  const video = document.getElementById('container');
+  video.style.width = window.innerHeight + 'px';
+  video.style.height = window.innerWidth + 'px';
+</script>
+
 </footer>
 
 </html>
